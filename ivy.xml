@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+	<info organisation="org.fitnesse" module="jfit">
+		<license name="GNU General Public License, version 2 (GPL-2.0)"
+			url="http://opensource.org/licenses/GPL-2.0" />
+		<description homepage="https://github.com/crazeydave/jfit">
+			FitLibrary provides general-purpose fixtures (and runners) for storytests with Fit and FitNesse. DoFixture provides an elegant way of organising storytests and expressing workflow.
+		</description>
+	</info>
+
+	<configurations>
+		<conf name="default" visibility="public" />
+		<!-- <conf name="standalone" visibility="public" extends="default" description="include in fitnesse-standalone build" /> -->
+		<conf name="test" visibility="public" extends="default" />
+		<!-- <conf name="slim" visibility="private" /> -->
+		<conf name="maven" visibility="private" />
+		<!-- <conf name="lesscss" visibility="private"  /> -->
+	</configurations>
+
+	<publications xmlns:e="urn:ant.apache.org:ivy-extras">
+		<artifact name="jfit" ext="jar" />
+		<artifact name="jfit" type="source" ext="jar" e:classifier="sources" />
+		<artifact name="jfit" conf="maven" type="pom" ext="pom" />
+		<artifact name="jfit" conf="maven" type="javadoc" ext="jar" e:classifier="javadoc" />
+		<artifact name="jfit" conf="maven" type="standalone" ext="jar" e:classifier="standalone" />
+	</publications>
+ 
+	<dependencies>
+		<!-- <dependency org="org.htmlparser" name="htmlparser" rev="2.1" conf="default,slim,maven->default">
+			<exclude org="com.sun" module="tools" />
+		</dependency> -->
+		<dependency org="ognl" name="ognl" rev="2.7.3" conf="default,maven->default" />
+		<dependency org="org.apache.poi" name="poi" rev="3.1-FINAL" conf="default,maven->default" />
+				
+		<dependency org="log4j" name="log4j" rev="1.2.17" conf="default,maven->default" />
+		
+		<dependency org="org.fitnesse" name="fitnesse" rev="20140901" conf="default,maven->default" />
+
+		<dependency org="org.apache.ant" name="ant" rev="1.7.1" conf="default" transitive="false" />
+		<dependency org="com.googlecode.java-diff-utils" name="diffutils" rev="1.2.1" conf="default,maven->default"/>
+		<dependency org="org.eclipse.jgit" name="org.eclipse.jgit" rev="3.5.1.201410131835-r" conf="default,maven->default" transitive="false"/>
+		<dependency org="junit" name="junit-dep" rev="4.11" conf="default,test->default" />
+		<!-- scope: test -->
+		<dependency org="org.jmock" name="jmock-junit4" rev="2.6.0" conf="test->default" />
+		<dependency org="org.hamcrest" name="hamcrest-all" rev="1.3" conf="test->default" />
+		<!-- <dependency org="net.javacrumbs.json-unit" name="json-unit" rev="1.1.6" conf="test->default" /> -->
+		<!-- <dependency org="org.mozilla" name="rhino" rev="1.7R4" conf="lesscss->default" /> -->
+	</dependencies>
+</ivy-module>
