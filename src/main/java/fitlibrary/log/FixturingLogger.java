@@ -43,9 +43,9 @@ public class FixturingLogger extends Logger {
 	public static Logger getLogger(String name) {
 		return hierarchy.getLogger(name,factory );
 	}
-	public static Logger getLogger(Class<?> type) {
-		return getLogger(type.getName());
-	}
+//	public static Logger getLogger(Class<?> type) {
+//		return getLogger(type.getName());
+//	}
 	public static Logger exists(final String name) {
 	    return hierarchy.exists(name);
 	}
