@@ -4,7 +4,8 @@
 	<property name="src.zip" value="fitlibrarySrc-${version}.zip" />
 	<property name="home" value="${basedir}" />
 	<property name="fitnesse.dir" value="${home}/fitnesse" />
-	<property name="lib" value="${fitnesse.dir}/lib" />
+	<!--<property name="lib" value="${fitnesse.dir}/lib" /> -->
+	<property name="lib" value="${home}/lib" />
 	<property name="src" value="${home}/src/main"  />
 	<property name="bin" value="${home}/bin" />
 	<property name="test.src" value="${home}/src/test" />
@@ -62,9 +63,8 @@
 
 	<!-- get dependencies -->
 	<target name="resolve-dependencies" depends="init-ivy" description="Retrieve dependencies with Ivy">
-		<ivy:retrieve />
+		<ivy:retrieve pattern="lib/[conf]/[artifact].[ext]" />
 	</target>
-
 
 	<target name="final-release">
 		<move file="${release.zip.file}" tofile="${final.release.zip}" />
@@ -199,23 +199,22 @@
 		<mkdir dir="${bin}" />
 		<javac srcdir="${src}" destdir="${bin}" debug="on">
 			<classpath>
-				<fileset dir="${fitnesse.dir}">
+				<!-- <fileset dir="${fitnesse.dir}">
 					<include name="fitnesse.jar" />
-				</fileset>
-				<fileset dir="${lib}">
+				</fileset> -->
+				<fileset dir="${lib}/default">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 		</javac>
 		<javac srcdir="${test.src}" destdir="${bin}">
 			<classpath>
-				<fileset dir="${fitnesse.dir}">
+				<!--<fileset dir="${fitnesse.dir}">
 					<include name="fitnesse.jar" />
-				</fileset>
-				<fileset dir="${lib}">
+				</fileset> -->
+				<fileset dir="${lib}/test">
 					<include name="**/*.jar" />
 				</fileset>
-
 			</classpath>
 		</javac>
 	</target>
@@ -227,18 +226,19 @@
 				<dirset dir="${bin}">
 					<include name="**" />
 				</dirset>
-				<fileset dir="${lib}">
+				<fileset dir="${lib}/test">
+					<exclude name="ant*.jar" />
 					<include name="**/*.jar" />
 				</fileset>
-				<fileset dir="${fitnesse.dir}">
+				<!--<fileset dir="${fitnesse.dir}">
 					<include name="fitnesse.jar" />
-				</fileset>
+				</fileset> -->
 			</classpath>
 			<formatter type="xml" if="output-junit-to-xml" />
-			<batchtest fork="yes" haltonfailure="yes" haltonerror="yes" filtertrace="no">
+			<batchtest fork="yes" haltonfailure="yes" haltonerror="yes" filtertrace="yes">
 				<fileset dir="${test.src}">
-					<exclude name="src/main/java/**/TestFitLibraryRunner.java" />
-					<include name="src/test/java/**/Test*.java" />
+					<exclude name="**/TestFitLibraryRunner.java" />
+					<include name="**/*.java" />
 				</fileset>
 			</batchtest>
 		</junit>
