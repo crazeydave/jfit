@@ -7,10 +7,14 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 
+import org.junit.After;
+import org.junit.Test;
+import org.junit.Before;
 
 import util.RegexTestCase;
+import static org.junit.Assert.*;
 
-public class FixtureTest extends RegexTestCase {
+public class FixtureTest  {
 	private Locale saveLocale;
 
 	static class HasParseMethod {
@@ -23,16 +27,16 @@ public class FixtureTest extends RegexTestCase {
 		//
 	}
 
-	@Override
+	@Before
 	protected void setUp() throws Exception {
-		super.setUp();
+		//super.setUp();
 		saveLocale = Locale.getDefault();
 		Locale.setDefault(Locale.US);
 	}
 
-	@Override
+	@After
 	protected void tearDown() throws Exception {
-		super.tearDown();
+		//super.tearDown();
 		Locale.setDefault(saveLocale);
 	}
 
@@ -152,8 +156,8 @@ public class FixtureTest extends RegexTestCase {
 
 		Parse cell = new Parse("td", "", null, null);
 		fixture.exception(cell, new NullPointerException("gobble gobble"));
-		assertSubString("gobble gobble", cell.body);
-		assertNotSubString("Exception", cell.body);
+		RegexTestCase.assertSubString("gobble gobble", cell.body);
+		RegexTestCase.assertNotSubString("Exception", cell.body);
 	}
 
 	public void testClearingSymbols() throws Exception {

@@ -7,14 +7,18 @@ import util.RegexTestCase;
 import fit.exception.NoSuchFieldFitFailureException;
 import fit.exception.NoSuchMethodFitFailureException;
 
-public class BindingTest extends RegexTestCase {
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
+
+public class BindingTest {
 	private TestFixture fixture;
 	private Parse cell1;
 	private Parse cell2;
 	private Parse cell3;
 	private Parse cell4;
 
-	@Override
+	@Before
 	protected void setUp() throws Exception {
 		fixture = new TestFixture();
 		Parse table = new Parse(
@@ -26,6 +30,7 @@ public class BindingTest extends RegexTestCase {
 	}
 
 	public void testConstruction() throws Throwable {
+		
 		assertEquals(Binding.QueryBinding.class,
 				Binding.create(fixture, "intMethod()").getClass());
 		assertEquals(Binding.QueryBinding.class,
@@ -78,14 +83,14 @@ public class BindingTest extends RegexTestCase {
 	public void testQueryBindingWithBlankCell() throws Throwable {
 		Binding binding = Binding.create(fixture, "intField");
 		binding.doCell(fixture, cell4);
-		assertSubString("0", cell4.text());
+		RegexTestCase.assertSubString("0", cell4.text());
 	}
 
 	public void testSaveBinding() throws Throwable {
 		Binding binding = Binding.create(fixture, "=intMethod()");
 		binding.doCell(fixture, cell1);
 		assertEquals("0", Fixture.getSymbol("123"));
-		assertSubString("123  = 0", cell1.text());
+		RegexTestCase.assertSubString("123  = 0", cell1.text());
 
 		fixture.intField = 999;
 		binding.doCell(fixture, cell2);
@@ -97,7 +102,7 @@ public class BindingTest extends RegexTestCase {
 		fixture.integerField = null;
 		binding.doCell(fixture, cell1);
 		assertEquals("null", Fixture.getSymbol("123"));
-		assertSubString("123  = null", cell1.text());
+		RegexTestCase.assertSubString("123  = null", cell1.text());
 
 		binding.doCell(fixture, cell2);
 		assertEquals("null", Fixture.getSymbol("321"));
@@ -110,7 +115,7 @@ public class BindingTest extends RegexTestCase {
 		assertEquals(999, fixture.intField);
 
 		binding.doCell(fixture, cell3);
-		assertSubString("No such symbol: abc", cell3.text());
+		RegexTestCase.assertSubString("No such symbol: abc", cell3.text());
 	}
 
 	// -AcD- Found this while testing with nulls

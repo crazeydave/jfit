@@ -1,13 +1,13 @@
-<project name="FitLibrary" default="jar" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="FitLibrary" default="jar" basedir=".">
 	<property name="version" value="2.0" />
 	<property name="jar" value="fitlibrary-${version}.jar" />
 	<property name="src.zip" value="fitlibrarySrc-${version}.zip" />
 	<property name="home" value="${basedir}" />
 	<property name="fitnesse.dir" value="${home}/fitnesse" />
 	<property name="lib" value="${fitnesse.dir}/lib" />
-	<property name="src" value="${home}/src" />
+	<property name="src" value="${home}/src/main"  />
 	<property name="bin" value="${home}/bin" />
-	<property name="test.src" value="${home}/test" />
+	<property name="test.src" value="${home}/src/test" />
 	<property name="port" value="8080" />
 	<property name="fitlibraryweb.dir" value="${home}/../fitlibraryweb" />
 
@@ -15,10 +15,11 @@
 	<property name="showpassesinreport" value="false" />
 	<property name="junit-xml-output" value="false" />
 	<property name="results-dir" value="${home}/runnerResults" />
-	<property name="timeout" value="600000" /> <!-- 10 mins default timeout -->
+	<property name="timeout" value="600000" />
+	<!-- 10 mins default timeout -->
 	<!-- release properties -->
 	<property name="releases.dir" value="${home}/release" />
-        <tstamp prefix="start"/>
+	<tstamp prefix="start" />
 	<property name="release.now.dir" value="${releases.dir}/FitLibrary" />
 	<property name="release.zip.file" value="${releases.dir}/fitLibrary-${version}.zip" />
 	<!-- release checking properties -->
@@ -30,19 +31,52 @@
 	<property name="final.release.dir" value="${releases.dir}" />
 	<property name="final.release.zip" value="${final.release.dir}/FitLibrary-${version}.zip" />
 
+	<!-- dependency properties -->
+	<property name="ivy.install.version" value="2.1.0-rc2" />
+	<condition property="ivy.home" value="${env.IVY_HOME}">
+		<isset property="env.IVY_HOME" />
+	</condition>
+	<property name="ivy.home" value="${user.home}/.ant" />
+	<property name="ivy.jar.dir" value="${ivy.home}/lib" />
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+
+	<!-- setup ivy -->
+	<target name="download-ivy" unless="offline">
+
+		<mkdir dir="${ivy.jar.dir}" />
+		<!-- download Ivy from web site so that it can be used even without any special installation -->
+		<get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true" />
+	</target>
+
+	<target name="init-ivy" depends="download-ivy">
+		<!-- try to load ivy here from ivy home, in case the user has not already dropped
+	              it into ant's lib dir (note that the latter copy will always take precedence).
+	              We will not fail as long as local lib dir exists (it may be empty) and
+	              ivy is in at least one of ant's lib dir or the local lib dir. -->
+		<path id="ivy.lib.path">
+			<fileset dir="${ivy.jar.dir}" includes="*.jar" />
+
+		</path>
+		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+	</target>
+
+	<!-- get dependencies -->
+	<target name="resolve-dependencies" depends="init-ivy" description="Retrieve dependencies with Ivy">
+		<ivy:retrieve />
+	</target>
+
+
 	<target name="final-release">
-		<move file="${release.zip.file}"
-		      tofile="${final.release.zip}"/>
+		<move file="${release.zip.file}" tofile="${final.release.zip}" />
 	</target>
 
 	<target name="release-check" depends="fresh-fitnesse, combine-release">
-		<batch-run suite="FitLibrary.SpecifiCations" timeout="600000" runDirectory="${release.fitnesse-copy}" 
-                           resultsDirectory="${release.testResults}"/>
+		<batch-run suite="FitLibrary.SpecifiCations" timeout="600000" runDirectory="${release.fitnesse-copy}" resultsDirectory="${release.testResults}" />
 	</target>
 
 	<target name="combine-release">
 		<mkdir dir="${release.unzip}" />
-		<unzip src="${release.zip.file}" dest="${release.unzip}"/>
+		<unzip src="${release.zip.file}" dest="${release.unzip}" />
 		<move todir="${release.fitnesse-copy}">
 			<fileset dir="${release.unzip}/fitnesse">
 				<include name="${jar}" />
@@ -62,20 +96,23 @@
 			<fileset dir="${release.unzip}/fitnesse/FitNesseRoot/files/testFiles" />
 		</move>
 		<move todir="${release.fitnesse-copy}/FitNesseRoot/files/dots">
-			<fileset dir="${release.unzip}/fitnesse/FitNesseRoot/files/dots"/>
+			<fileset dir="${release.unzip}/fitnesse/FitNesseRoot/files/dots" />
 		</move>
 		<move todir="${release.fitnesse-copy}/FitNesseRoot/files/gameImages">
-			<fileset dir="${release.unzip}/fitnesse/FitNesseRoot/files/gameImages"/>
+			<fileset dir="${release.unzip}/fitnesse/FitNesseRoot/files/gameImages" />
 		</move>
 		<copy todir="${release.copy}/folderRunner">
 			<fileset dir="${release.unzip}/folderRunner" />
+		</copy>
+		<copy todir="${release.fitnesse-copy}">
+			<fileset file="fitnesse/fitnesse.jar" />
 		</copy>
 		<delete dir="${release.unzip}" />
 	</target>
 
 	<target name="fresh-fitnesse">
-		<delete dir="${release.copy}"/>
-		<mkdir dir="${release.fitnesse-copy}"/>
+		<delete dir="${release.copy}" />
+		<mkdir dir="${release.fitnesse-copy}" />
 		<copy todir="${release.fitnesse-copy}">
 			<fileset file="fitnesse/fitnesse.jar" />
 		</copy>
@@ -87,7 +124,7 @@
 	<target name="create-release-zip">
 		<echo message="Creating release at ${release.now.dir}" />
 		<mkdir dir="${releases.dir}" />
-		<delete file="${release.zip.file}"/>
+		<delete file="${release.zip.file}" />
 		<delete dir="${release.now.dir}" />
 		<mkdir dir="${release.now.dir}" />
 		<copy todir="${release.now.dir}">
@@ -121,29 +158,29 @@
 			<fileset dir="fitnesse/FitNesseRoot/files/testFiles" />
 		</copy>
 		<copy todir="${release.now.dir}/fitnesse/FitNesseRoot/files/dots">
-			<fileset dir="fitnesse/FitNesseRoot/files/dots"/>
+			<fileset dir="fitnesse/FitNesseRoot/files/dots" />
 		</copy>
 		<copy todir="${release.now.dir}/fitnesse/FitNesseRoot/files/gameImages">
-			<fileset dir="fitnesse/FitNesseRoot/files/gameImages"/>
+			<fileset dir="fitnesse/FitNesseRoot/files/gameImages" />
 		</copy>
 		<copy todir="${release.now.dir}/fitnesse/FitNesseRoot/files/images">
-			<fileset file="fitnesse/FitNesseRoot/files/images/FitBookCover.jpeg"/>
+			<fileset file="fitnesse/FitNesseRoot/files/images/FitBookCover.jpeg" />
 		</copy>
 		<copy todir="${release.now.dir}/folderRunner">
 			<fileset dir="folderRunner" />
 		</copy>
-		<zip basedir="${release.now.dir}" destfile="${release.zip.file}"/>
-		<delete dir="${release.now.dir}"/>
+		<zip basedir="${release.now.dir}" destfile="${release.zip.file}" />
+		<delete dir="${release.now.dir}" />
 	</target>
 
-	<target name="jar" depends="clean, compile, junit, jar-no-test" description="Create fitlibrary jar file in local FitNesseServer directory"/>
+	<target name="jar" depends="clean, compile, junit, jar-no-test" description="Create fitlibrary jar file in local FitNesseServer directory" />
 
 	<target name="jar-no-test" depends="clean, compile">
-		<echo message="Create fitlibrary jar file in local FitNesse"/>
-		<jar destfile="${fitnesse.dir}/${jar}" basedir="bin"/>
-		<echo message="Create source zip file"/>
+		<echo message="Create fitlibrary jar file in local FitNesse" />
+		<jar destfile="${fitnesse.dir}/${jar}" basedir="bin" />
+		<echo message="Create source zip file" />
 		<zip destfile="${lib}/src/${src.zip}">
-			<fileset dir="src"/>
+			<fileset dir="src" />
 		</zip>
 		<copy todir="${fitlibraryweb.dir}/fitnesse">
 			<fileset file="${fitnesse.dir}/${jar}" />
@@ -157,7 +194,8 @@
 		<delete dir="${bin}" />
 	</target>
 
-	<target name="compile">
+	<!-- compile -->
+	<target name="compile" depends="resolve-dependencies">
 		<mkdir dir="${bin}" />
 		<javac srcdir="${src}" destdir="${bin}" debug="on">
 			<classpath>
@@ -184,23 +222,23 @@
 
 	<target name="junit" description="run the junit tests">
 		<junit fork="yes" dir="${home}" showoutput="yes" printsummary="false" outputtoformatters="true">
-			<formatter type="brief" useFile="false"/>
+			<formatter type="brief" useFile="false" />
 			<classpath>
 				<dirset dir="${bin}">
-					<include name="**"/>
+					<include name="**" />
 				</dirset>
 				<fileset dir="${lib}">
-					<include name="**/*.jar"/>
+					<include name="**/*.jar" />
 				</fileset>
 				<fileset dir="${fitnesse.dir}">
 					<include name="fitnesse.jar" />
 				</fileset>
 			</classpath>
-			<formatter type="xml" if="output-junit-to-xml"/>
+			<formatter type="xml" if="output-junit-to-xml" />
 			<batchtest fork="yes" haltonfailure="yes" haltonerror="yes" filtertrace="no">
 				<fileset dir="${test.src}">
-					<exclude name="**/TestFitLibraryRunner.java"/>
-					<include name="**/Test*.java"/>
+					<exclude name="src/main/java/**/TestFitLibraryRunner.java" />
+					<include name="src/test/java/**/Test*.java" />
 				</fileset>
 			</batchtest>
 		</junit>
@@ -219,8 +257,8 @@
 			<jvmarg value="-Xmx256m" />
 		</java>
 		<echo message="Waiting for FitNesse to start on port ${port}" />
-		<waitfor maxwait="30" maxwaitunit="second" checkevery="100"  timeoutproperty="fitness.failed">
-			<http url="http://localhost:${port}"/>
+		<waitfor maxwait="30" maxwaitunit="second" checkevery="100" timeoutproperty="fitness.failed">
+			<http url="http://localhost:${port}" />
 		</waitfor>
 		<fail if="fitness.failed">FitNesse failed to start...</fail>
 	</target>
@@ -232,10 +270,10 @@
 					<include name="fitnesse.jar" />
 				</fileset>
 			</classpath>
-			<arg value="-h"/>
-			<arg value="localhost"/>
-			<arg value="-p"/>
-			<arg value="${port}"/>
+			<arg value="-h" />
+			<arg value="localhost" />
+			<arg value="-p" />
+			<arg value="${port}" />
 		</java>
 	</target>
 
@@ -251,40 +289,42 @@
 	</target>
 
 	<target name="batch-run-specifications">
-		<batch-run suite="FitLibrary.SpecifiCations" timeout="600000"/>
+		<batch-run suite="FitLibrary.SpecifiCations" timeout="600000" />
 	</target>
 
 	<target name="batch-run-specific">
-		<batch-run suite="FitLibrary.SpecifiCations.SpecialisedTables" timeout="600000"/>
+		<batch-run suite="FitLibrary.SpecifiCations.SpecialisedTables" timeout="600000" />
 	</target>
 
 	<target name="delete-batch-runner-results-dir">
-		<delete dir="${results-dir}"/>
+		<delete dir="${results-dir}" />
 	</target>
 
 	<macrodef name="batch-run">
-		<attribute name="suite"/>
-		<attribute name="timeout" default="600000"/> <!-- 10 mins default timeout -->
-		<attribute name="runDirectory" default="${fitnesse.dir}"/> <!-- 10 mins default timeout -->
-		<attribute name="resultsDirectory" default="${results-dir}"/> <!-- 10 mins default timeout -->
+		<attribute name="suite" />
+		<attribute name="timeout" default="600000" />
+		<!-- 10 mins default timeout -->
+		<attribute name="runDirectory" default="${fitnesse.dir}" />
+		<!-- 10 mins default timeout -->
+		<attribute name="resultsDirectory" default="${results-dir}" />
+		<!-- 10 mins default timeout -->
 		<sequential>
 			<echo message="Batch run of @{suite} with fitnesse at @{runDirectory} and results at @{resultsDirectory}" />
-			<java classname="fitlibrary.batch.FitLibraryRunner" fork="true" dir="@{runDirectory}" 
-			      timeout="@{timeout}" failonerror="true">
-				<arg value="-suiteName"/>
-				<arg value="@{suite}"/>
-				<arg value="-fitNesseDiry"/>
-				<arg value="."/>
-				<arg value="-resultsDiry"/>
-				<arg value="@{resultsDirectory}"/>
-				<arg value="-showPasses"/>
-				<arg value="${showpassesinreport}"/>
-				<arg value="-junitXmlOutput"/>
-				<arg value="${junit-xml-output}"/>
+			<java classname="fitlibrary.batch.FitLibraryRunner" fork="true" dir="@{runDirectory}" timeout="@{timeout}" failonerror="true">
+				<arg value="-suiteName" />
+				<arg value="@{suite}" />
+				<arg value="-fitNesseDiry" />
+				<arg value="." />
+				<arg value="-resultsDiry" />
+				<arg value="@{resultsDirectory}" />
+				<arg value="-showPasses" />
+				<arg value="${showpassesinreport}" />
+				<arg value="-junitXmlOutput" />
+				<arg value="${junit-xml-output}" />
 
 				<classpath>
 					<fileset dir="${lib}">
-						<include name="**/*.jar"/>
+						<include name="**/*.jar" />
 					</fileset>
 					<fileset dir="${fitnesse.dir}">
 						<include name="fitnesse.jar" />

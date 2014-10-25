@@ -51,16 +51,14 @@
 		</dependency> -->
 		<dependency org="ognl" name="ognl" rev="2.7.3" conf="default,maven->default" />
 		<dependency org="org.apache.poi" name="poi" rev="3.1-FINAL" conf="default,maven->default" />
-				
 		<dependency org="log4j" name="log4j" rev="1.2.17" conf="default,maven->default" />
-		
 		<dependency org="org.fitnesse" name="fitnesse" rev="20140901" conf="default,maven->default" />
 
 		<dependency org="org.apache.ant" name="ant" rev="1.7.1" conf="default" transitive="false" />
 		<dependency org="com.googlecode.java-diff-utils" name="diffutils" rev="1.2.1" conf="default,maven->default"/>
-		<dependency org="org.eclipse.jgit" name="org.eclipse.jgit" rev="3.5.1.201410131835-r" conf="default,maven->default" transitive="false"/>
 		<dependency org="junit" name="junit-dep" rev="4.11" conf="default,test->default" />
 		<!-- scope: test -->
+		<dependency org="org.fitnesse" name="fitnesse" rev="20140901" conf="test->default" />
 		<dependency org="org.jmock" name="jmock-junit4" rev="2.6.0" conf="test->default" />
 		<dependency org="org.hamcrest" name="hamcrest-all" rev="1.3" conf="test->default" />
 		<!-- <dependency org="net.javacrumbs.json-unit" name="json-unit" rev="1.1.6" conf="test->default" /> -->

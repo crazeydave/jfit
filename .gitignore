@@ -7,3 +7,4 @@ testPropertyFile.txt
 folderRunner/reports
 folderRunner/tests/files
 release
+/target/

@@ -14,7 +14,7 @@ import fitlibrary.batch.trinidad.InMemoryTestImpl;
 import fitlibrary.batch.trinidad.TestDescriptor;
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.PathParser;
-import fitnesse.wiki.VirtualEnabledPageCrawler;
+//import fitnesse.wiki.VirtualEnabledPageCrawler;
 import fitnesse.wiki.WikiPage;
 import fitnesse.wiki.WikiPagePath;
 
@@ -33,17 +33,17 @@ public class DefinedActionLoader implements Runnable {
 	@Override
 	public void run() {
 		try {
-			List<String> pages = getPageNames();
-			PageCrawler crawler = root.getPageCrawler();
-			crawler.setDeadEndStrategy(new VirtualEnabledPageCrawler());
-			for (String pageName : pages){
-				String fullPageName = name+"."+pageName;
-				WikiPagePath path = PathParser.parse(fullPageName);
-				WikiPage page = crawler.getPage(root, path);
-				String html = page.getData().getHtml();
-				if (html.contains("<table"))
-					queue.add(new InMemoryTestImpl(fullPageName,html));
-			}
+//			List<String> pages = getPageNames();
+//			PageCrawler crawler = root.getPageCrawler();
+//			crawler.setDeadEndStrategy(new VirtualEnabledPageCrawler());
+//			for (String pageName : pages){
+//				String fullPageName = name+"."+pageName;
+//				WikiPagePath path = PathParser.parse(fullPageName);
+//				WikiPage page = crawler.getPage(root, path);
+//				String html = page.getData().getHtml();
+//				if (html.contains("<table"))
+//					queue.add(new InMemoryTestImpl(fullPageName,html));
+//			}
 		} 
 		catch(Exception e) {
 			queue.add(new InMemoryTestImpl("Exception","error reading suite "+name+": "+e));

@@ -18,8 +18,8 @@ import java.util.Date;
 import fit.Counts;
 import fitlibrary.batch.trinidad.TestResult;
 import fitlibrary.batch.trinidad.TestResultRepository;
-import fitnesse.junit.JUnitXMLTestListener;
-import fitnesse.responders.run.TestSummary;
+//import fitnesse.junit.JUnitXMLTestListener;
+//import fitnesse.responders.run.TestSummary;
 
 public class FolderTestResultRepository implements TestResultRepository {
 	private final String outputPath;
@@ -76,8 +76,8 @@ public class FolderTestResultRepository implements TestResultRepository {
         }
 
         // FitNesse already has a JUnit XML output class - adapt Counts to a TestSummary and use it.
-        JUnitXMLTestListener xmlOut = new JUnitXMLTestListener(outputPath);
-        xmlOut.recordTestResult(tr.getName(), new TestSummary(counts.right, counts.wrong, counts.ignores, counts.exceptions), tr.durationMillis());
+        //JUnitXMLTestListener xmlOut = new JUnitXMLTestListener(outputPath);
+        //xmlOut.recordTestResult(tr.getName(), new TestSummary(counts.right, counts.wrong, counts.ignores, counts.exceptions), tr.durationMillis());
 	}
 	
 	private boolean skippedAlreadyPassed(Counts counts) {

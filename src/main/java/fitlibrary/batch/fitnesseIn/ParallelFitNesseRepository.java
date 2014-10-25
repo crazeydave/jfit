@@ -12,15 +12,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import fitlibrary.batch.trinidad.InMemoryTestImpl;
 import fitlibrary.batch.trinidad.TestDescriptor;
 import fitlibrary.batch.trinidad.TestResultRepository;
-import fitnesse.ComponentFactory;
+//import fitnesse.ComponentFactory;
 import fitnesse.FitNesseContext;
-import fitnesse.WikiPageFactory;
+//import fitnesse.WikiPageFactory;
 import fitnesse.authentication.PromiscuousAuthenticator;
-import fitnesse.html.HtmlPage;
-import fitnesse.html.HtmlPageFactory;
-import fitnesse.html.SetupTeardownAndLibraryIncluder;
+//import fitnesse.html.HtmlPage;
+//import fitnesse.html.HtmlPageFactory;
+//import fitnesse.html.SetupTeardownAndLibraryIncluder;
 import fitnesse.responders.ResponderFactory;
-import fitnesse.responders.WikiImportTestEventListener;
+//import fitnesse.responders.WikiImportTestEventListener;
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.PageCrawlerImpl;
 import fitnesse.wiki.PageData;
@@ -60,15 +60,16 @@ public class ParallelFitNesseRepository implements ParallelTestRepository {
 	@Override
 	public TestDescriptor getTest(String name) throws IOException {
 		try{
-			WikiPagePath path = PathParser.parse(name);
-			PageCrawler crawler = context.root.getPageCrawler();
-			WikiPage page = crawler.getPage(context.root, path);
-			if (page == null)
-				throw new Error("Test "+name+" not found!");
-			WikiPage suiteSetUp = PageCrawlerImpl.getClosestInheritedPage(SUITE_SETUP_NAME, page);
-			WikiPage suiteTearDown = PageCrawlerImpl.getClosestInheritedPage(SUITE_TEARDOWN_NAME, page);
-			String content = formatWikiPage(name, page, suiteSetUp,suiteTearDown,context);
-			return new InMemoryTestImpl(name,content);
+//			WikiPagePath path = PathParser.parse(name);
+//			PageCrawler crawler = context.root.getPageCrawler();
+//			WikiPage page = crawler.getPage(context.root, path);
+//			if (page == null)
+//				throw new Error("Test "+name+" not found!");
+//			WikiPage suiteSetUp = PageCrawlerImpl.getClosestInheritedPage(SUITE_SETUP_NAME, page);
+//			WikiPage suiteTearDown = PageCrawlerImpl.getClosestInheritedPage(SUITE_TEARDOWN_NAME, page);
+//			String content = formatWikiPage(name, page, suiteSetUp,suiteTearDown,context);
+//			return new InMemoryTestImpl(name,content);
+			return null;
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
@@ -94,24 +95,25 @@ public class ParallelFitNesseRepository implements ParallelTestRepository {
 	}
 	private FitNesseContext makeContext(String rootPath, int port) throws IOException {
 		try{
-			FitNesseContext resultContext = new FitNesseContext();
-			FitNesseContext.globalContext = resultContext; // Make the port visible so that ${FITNESSE_PORT} will work
-			resultContext.port = port;
-			resultContext.rootPath = rootPath;
-			ComponentFactory componentFactory = new ComponentFactory(resultContext.rootPath);
-			resultContext.rootDirectoryName = "FitNesseRoot"; //arguments.getRootDirectory();
-			resultContext.setRootPagePath();
-			String defaultNewPageContent = componentFactory.getProperty(ComponentFactory.DEFAULT_NEWPAGE_CONTENT);
-			if (defaultNewPageContent != null)
-				resultContext.defaultNewPageContent = defaultNewPageContent;
-			WikiPageFactory wikiPageFactory = new WikiPageFactory();
-			resultContext.responderFactory = new ResponderFactory(resultContext.rootPagePath);
-			resultContext.htmlPageFactory = componentFactory.getHtmlPageFactory(new HtmlPageFactory());
-			resultContext.root = wikiPageFactory.makeRootPage(resultContext.rootPath, resultContext.rootDirectoryName, componentFactory);
-			resultContext.logger = null;
-			resultContext.authenticator = new PromiscuousAuthenticator();
-			WikiImportTestEventListener.register();
-			return resultContext;
+//			FitNesseContext resultContext = new FitNesseContext();
+//			FitNesseContext.globalContext = resultContext; // Make the port visible so that ${FITNESSE_PORT} will work
+//			resultContext.port = port;
+//			resultContext.rootPath = rootPath;
+//			ComponentFactory componentFactory = new ComponentFactory(resultContext.rootPath);
+//			resultContext.rootDirectoryName = "FitNesseRoot"; //arguments.getRootDirectory();
+//			resultContext.setRootPagePath();
+//			String defaultNewPageContent = componentFactory.getProperty(ComponentFactory.DEFAULT_NEWPAGE_CONTENT);
+//			if (defaultNewPageContent != null)
+//				resultContext.defaultNewPageContent = defaultNewPageContent;
+//			WikiPageFactory wikiPageFactory = new WikiPageFactory();
+//			resultContext.responderFactory = new ResponderFactory(resultContext.rootPagePath);
+//			resultContext.htmlPageFactory = componentFactory.getHtmlPageFactory(new HtmlPageFactory());
+//			resultContext.root = wikiPageFactory.makeRootPage(resultContext.rootPath, resultContext.rootDirectoryName, componentFactory);
+//			resultContext.logger = null;
+//			resultContext.authenticator = new PromiscuousAuthenticator();
+//			WikiImportTestEventListener.register();
+//			return resultContext;
+			return null;
 		}
 		catch (Exception e) {
 			throw new IOException(rootPath +" is not a fitnesse root url: "+e);
@@ -122,25 +124,26 @@ public class ParallelFitNesseRepository implements ParallelTestRepository {
 	}
 	public static String formatWikiPage(String name, WikiPage page, WikiPage suiteSetUp, WikiPage suiteTearDown, FitNesseContext context) throws Exception{
 		PageData pd = page.getData();
-		SetupTeardownAndLibraryIncluder.includeInto(pd);
-		HtmlPage html = context.htmlPageFactory.newPage();
-		html.title.use(name);
-		html.header.use(name);
+//		SetupTeardownAndLibraryIncluder.includeInto(pd);
+//		HtmlPage html = context.htmlPageFactory.newPage();
+//		html.title.use(name);
+//		html.header.use(name);
 
-		StringBuffer content=new StringBuffer();
-		content.append(pd.getHeaderPageHtml());
-		if (suiteSetUp != null)
-			content.append(suiteSetUp.getData().getHtml());
-		content.append(pd.getHtml());
-		if (suiteTearDown != null)
-			content.append(suiteTearDown.getData().getHtml());
-		pd.setContent(content.toString());
-		content.append(pd.getFooterPageHtml());
-		html.main.use(content.toString());
-		String result = html.html();
-		result = result.replace("href=\"/files/css/", "href=\"");
-		result = result.replaceAll("/files/javascript/", "");
-		result = result.replaceAll("/files/images/", "images/");
-		return result;
+//		StringBuffer content=new StringBuffer();
+//		content.append(pd.getHeaderPageHtml());
+//		if (suiteSetUp != null)
+//			content.append(suiteSetUp.getData().getContent());
+//		content.append(pd.getHtml());
+//		if (suiteTearDown != null)
+//			content.append(suiteTearDown.getData().getContent());
+//		pd.setContent(content.toString());
+//		content.append(pd.getFooterPageHtml());
+//		html.main.use(content.toString());
+//		String result = html.html();
+//		result = result.replace("href=\"/files/css/", "href=\"");
+//		result = result.replaceAll("/files/javascript/", "");
+//		result = result.replaceAll("/files/images/", "images/");
+//		return result;
+		return null;
 	}
 }
