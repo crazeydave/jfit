@@ -6,9 +6,9 @@
 	<property name="fitnesse.dir" value="${home}/fitnesse" />
 	<!--<property name="lib" value="${fitnesse.dir}/lib" /> -->
 	<property name="lib" value="${home}/lib" />
-	<property name="src" value="${home}/src/main"  />
+	<property name="src" value="${home}/src/main/java"  />
 	<property name="bin" value="${home}/bin" />
-	<property name="test.src" value="${home}/src/test" />
+	<property name="test.src" value="${home}/src/test/java" />
 	<property name="port" value="8080" />
 	<property name="fitlibraryweb.dir" value="${home}/../fitlibraryweb" />
 
