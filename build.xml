@@ -239,6 +239,7 @@
 				<fileset dir="${test.src}">
 					<exclude name="**/TestFitLibraryRunner.java" />
 					<include name="**/*.java" />
+					<include name="" />
 				</fileset>
 			</batchtest>
 		</junit>
